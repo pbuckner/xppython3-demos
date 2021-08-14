@@ -160,8 +160,8 @@ class PythonInterface:
         # Draw a rectangle with a color gradiant
         numLines = int(min(top - bottom, right - left) / 2)
         time = int(numLines * xp.getElapsedTime()) % numLines
-        GL.glBegin(GL.GL_LINE_LOOP)
         for i in range(numLines):
+            GL.glBegin(GL.GL_LINE_LOOP)
             left += 1
             right -= 1
             bottom += 1
@@ -172,7 +172,7 @@ class PythonInterface:
             GL.glVertex2f(left, top)
             GL.glVertex2f(right, top)
             GL.glVertex2f(right, bottom)
-        GL.glEnd()
+            GL.glEnd()
 
     def MouseClickCallback(self, *args):
         pass
