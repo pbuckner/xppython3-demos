@@ -114,9 +114,22 @@ def my_planes_now():
     # it consists of an 8 byte character array, which is null terminated.
     # The array is 64*8 bytes long, and the first 8 bytes are the user's tailnumber obviously.
     # Note that this is, unlike the Mode-S ID, totally optional.
-    # But it is nice to see the tainumber on the map obviously!
+    # But it is nice to see the tailnumber on the map obviously!
     for i in range(1, TARGETS + 1):
         xp.setDatab(flt_id, tailnum[i - 1], i * 8, len(tailnum[i - 1]))  # copy at most 8 characters, but not more than we actually have.
+
+    # this is extra: re-read using xp.getDatab() so you can see how it's done
+    xp.log("Size of dataref array is {}".format(xp.getDatab(flt_id, None, 0, 0)))
+    data_array = []
+    # Since we know it's 64 * 8 bytes long, we'll go through the array 8 bytes at a time
+    for i in range(0, 64 * 8, 8):
+        xp.getDatab(flt_id, data_array, i, 8)
+        xp.log("array is an array of bytes: {}".format(data_array))
+        if any(data_array):  # any non-zero bytes?
+            # e.g., [78, 52, 50, 56, 88, 0, 0, 0]
+            xp.log("  or, converted to python bytearray: {}".format(bytearray(data_array)))
+            xp.log("  or, converted to unicode:  {}".format(bytearray([x for x in data_array if x]).decode('utf-8')))
+            xp.log("  or, converted differently: {}".format("".join(([chr(x) for x in data_array if x > 0]))))
 
     # start updating
     xp.registerFlightLoopCallback(floop_cb, 1, None)
