@@ -93,6 +93,12 @@ class PythonInterface:
         xp.unshareData("xppython3/demos/sharedata/sharedint1", xp.Type_Int, self.MyDataChangedCallback, 0)
 
     def XPluginEnable(self):
+        # Register datarefs with datareftool, to make debugging easier!
+        for sig in ('com.leecbaker.datareftool', 'xplanesdk.examples.DataRefEditor'):
+            dre = xp.findPluginBySignature(sig)
+            if dre != xp.NO_PLUGIN_ID:
+                xp.sendMessageToPlugin(dre, 0x01000000, 'xppython3/demos/sharedata/number1')
+                xp.sendMessageToPlugin(dre, 0x01000000, 'xppython3/demos/sharedata/sharedint1')
         return 1
 
     def XPluginDisable(self):
