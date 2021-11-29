@@ -2,6 +2,13 @@
 
 from OpenGL import GL
 import xp
+try:
+    from numpy import put, zeros, uint8
+    use_numpy = True
+except:
+    use_numpy = False
+
+    
 
 # Our texture dimensions.  Textures MUST be powers of 2 in OpenGL - if you don't need that much space,
 # just round up to the nearest power of 2.
@@ -22,16 +29,16 @@ ssx = 255 / sx
 ssy = 255 / sy
 
 
-def my_draw_tex(_inPhase, _inIsBefore, _inRefcon):
+def my_draw_tex(_inPhase, _inIsBefore, refCon):
     # A really dumb bitmap generator - just fill R and G with x and Y based color watch, and the B and alpha channels
     # based on mouse position.
-    global buffer
+    global initialized, buffer
     mx, my = xp.getMouseLocationGlobal()
     mx = max(0, mx)
     my = max(0, my)
     mx = min(sx, mx)
     my = min(sy, my)
-    if False:  # simple port... slow
+    if not use_numpy:  # simple port... slow
         i = 0
         for y in range(HEIGHT):
             for x in range(WIDTH):
@@ -48,19 +55,19 @@ def my_draw_tex(_inPhase, _inIsBefore, _inRefcon):
         #    the screen width/height and therefore do not change during
         #    execution of this function, so calculate once and then
         #    assign it.
-        global initialized
         i = 0
         mmx = int(mx * ssx)
         mmy = int(my * ssy)
-        for y in range(HEIGHT):
-            for x in range(WIDTH):
-                if not initialized:
-                    buffer[i] = int(x * 255 / WIDTH)
-                    buffer[i + 1] = int(y * 255 / HEIGHT)
-
-                buffer[i + 2] = mmx
-                buffer[i + 3] = mmy
-                i += 4
+        if initialized:
+            put(refCon['buffer'], refCon['array'], [mmx, mmy])
+        else:
+            for y in range(HEIGHT):
+                for x in range(WIDTH):
+                    refCon['buffer'][i] = int(x * 255 / WIDTH)
+                    refCon['buffer'][i + 1] = int(y * 255 / HEIGHT)
+                    refCon['buffer'][i + 2] = mmx
+                    refCon['buffer'][i + 3] = mmy
+                    i += 4
         initialized = True
 
     xp.bindTexture2d(g_tex_num, 0)
@@ -74,7 +81,7 @@ def my_draw_tex(_inPhase, _inIsBefore, _inRefcon):
                        HEIGHT,
                        GL.GL_RGBA,                 # color of data we are seding
                        GL.GL_UNSIGNED_BYTE,        # encoding of data we are sending
-                       buffer)
+                       refCon['buffer'].tobytes() if use_numpy else buffer)
 
     # The drawing part.
     xp.setGraphicsState(
@@ -106,7 +113,7 @@ class PythonInterface:
         g_tex_num = xp.generateTextureNumbers(1)[0]
         xp.bindTexture2d(g_tex_num, 0)
         # Init to black for now.
-        buffer = bytearray(WIDTH * HEIGHT * 4)
+        buffer = [0, ] * (WIDTH * HEIGHT * 4)
         # The first time we must use glTexImage2D.
         GL.glTexImage2D(
             GL.GL_TEXTURE_2D,
@@ -123,11 +130,18 @@ class PythonInterface:
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
 
-        xp.registerDrawCallback(my_draw_tex, xp.Phase_FirstCockpit, 0, None)
+        if use_numpy:
+            # create and pass a numpy buffer, rather than use global.
+            # and, create array of indices, which we'll use each draw cycle for updates
+            self.refCon = {'buffer': zeros(WIDTH * HEIGHT * 4, uint8),
+                           'array': sorted(list(range(2, 4 * HEIGHT * WIDTH, 4)) + list(range(3, 4 * HEIGHT * WIDTH, 4)))}
+        else:
+            self.refCon = None
+        xp.registerDrawCallback(my_draw_tex, xp.Phase_FirstCockpit, 0, refCon=self.refCon)
         return "Texture example", "xppython3.test.texture_example", "Shows how to use textures."
 
     def XPluginStop(self):
-        xp.unregisterDrawCallback(my_draw_tex, xp.Phase_FirstCockpit, 0, None)
+        xp.unregisterDrawCallback(my_draw_tex, xp.Phase_FirstCockpit, 0, refCon=self.refCon)
         xp.bindTexture2d(g_tex_num, 0)
         GL.glDeleteTextures(1, g_tex_num)
 
