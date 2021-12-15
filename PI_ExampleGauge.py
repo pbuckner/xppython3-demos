@@ -235,7 +235,7 @@ class PythonInterface:
         NeedleTranslationY = NeedleBottom + (5 * GaugeHeightRatio)
         
         # Tell Xplane what we are doing
-        xp.setGraphicsState(numberTexUnits=1)
+        xp.setGraphicsState(numberTexUnits=1)  # ( NOTE: xppython3 bug requires parameter named 'numberTextUnits', fixed v3.1.3)
         
         # Handle day/night
         glColor3f(Red, Green, Blue)
@@ -265,7 +265,7 @@ class PythonInterface:
         
         glPushMatrix()
         # Turn on Alpha Blending and turn off Depth Testing
-        xp.setGraphicsState(numberTexUnits=1, alphaBlending=1)
+        xp.setGraphicsState(numberTexUnits=1, alphaBlending=1)  # ( NOTE: xppython3 bug requires parameter named 'numberTextUnits', fixed v3.1.3)
         
         glTranslatef(NeedleTranslationX, NeedleTranslationY, 0.0)
         glRotatef(self.EngineN1[0], 0.0, 0.0, -1.0)
@@ -294,7 +294,7 @@ class PythonInterface:
         glEnd()
 
         # # Turn off Alpha Blending and turn on Depth Testing
-        xp.setGraphicsState(numberTexUnits=1, depthTesting=1)
+        xp.setGraphicsState(numberTexUnits=1, depthTesting=1)  # ( NOTE: xppython3 bug requires parameter named 'numberTextUnits', fixed v3.1.3)
         glPopMatrix()
         
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
