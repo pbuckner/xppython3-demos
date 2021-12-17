@@ -137,6 +137,14 @@ class PythonInterface:
                            'array': sorted(list(range(2, 4 * HEIGHT * WIDTH, 4)) + list(range(3, 4 * HEIGHT * WIDTH, 4)))}
         else:
             self.refCon = None
+        # Note a change from original example:
+        #  Phase_FirstCockpit:
+        #     Using this phase will result in a square floating "window" to be drawn, visible for any aircraft.
+        #  Phase_Gauges:
+        #     This phase will result in drawing on the underlying gauge "screens" of the aircraft.
+        #     Cessna 172 has no applicable gauge textures, so NOTHING WILL BE DRAWN!
+        #     737-800 _does_ have gauge texture, so the drawing will be displayed across
+        #     all of the screens & move in 3d. It is VERY SLOW, you have been warned.
         xp.registerDrawCallback(my_draw_tex, xp.Phase_FirstCockpit, 0, refCon=self.refCon)
         return "Texture example", "xppython3.test.texture_example", "Shows how to use textures."
 
