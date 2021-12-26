@@ -1,3 +1,4 @@
+import os
 from XPPython3 import xp
 from XPPython3 import xp_imgui
 from XPPython3 import imgui
