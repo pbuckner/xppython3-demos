@@ -15,7 +15,7 @@ from XPPython3 import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "Control1"
+        self.Name = "Control1 v1.0"
         self.Sig = "SandyBarbour.Python.Control1"
         self.Desc = "A plug-in that move the control surfaces."
         self.MAX_ITEMS = 12

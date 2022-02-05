@@ -164,7 +164,7 @@ def retry_acquiring_planes():
 
 class PythonInterface:
     def XPluginStart(self):
-        name = "TCAS override test"
+        name = "TCAS override test v1.0"
         sig = "com.laminarresearch.test.tcas"
         desc = "Test plugin for TCAS override datarefs"
         return name, sig, desc

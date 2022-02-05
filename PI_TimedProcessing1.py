@@ -21,7 +21,7 @@ import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "TimedProcessing"
+        self.Name = "TimedProcessing v1.0"
         self.Sig = "timedProcessing.demos.xppython3"
         self.Desc = "A plugin that records sim data."
 

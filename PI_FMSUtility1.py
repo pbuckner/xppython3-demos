@@ -13,7 +13,7 @@ from XPPython3 import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "FMSUtility1"
+        self.Name = "FMSUtility1 v1.0"
         self.Sig = "SandyBarbour.Python.FMSUtility1"
         self.Desc = "A plug-in that accesses the FMS."
 

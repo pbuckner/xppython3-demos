@@ -16,7 +16,7 @@ from XPPython3 import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "InputOutput1"
+        self.Name = "InputOutput1 v1.0"
         self.Sig = "SandyBarbour.Python.InputOutput1"
         self.Desc = "A plug-in that handles data Input/Output."
 

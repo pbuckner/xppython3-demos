@@ -21,7 +21,7 @@ from XPPython3 import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "Override"
+        self.Name = "Override v1.0"
         self.Sig = "SandyBarbour.Python.Override"
         self.Desc = "A plug-in that Overrides Xplane."
 

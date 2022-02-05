@@ -15,7 +15,7 @@ from XPPython3 import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "Position1"
+        self.Name = "Position1 v1.0"
         self.Sig = "SandyBarbour.Python.Position1"
         self.Desc = "A plug-in that changes the aircraft attitude."
 

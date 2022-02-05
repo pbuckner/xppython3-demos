@@ -13,7 +13,7 @@ import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "CommandSim1"
+        self.Name = "CommandSim1 v1.0"
         self.Sig = "commandSim1.demos.xppython3"
         self.Desc = "An example of sending commands."
 

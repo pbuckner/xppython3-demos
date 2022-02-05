@@ -26,7 +26,7 @@ class PythonInterface:
         xp.registerCommandHandler(self.cmd, self.commandHandler, 1, self.cmdRef)
         xp.appendMenuItemWithCommand(xp.findPluginsMenu(), 'IMGUI Window', self.cmd)
 
-        return os.path.basename(__file__), 'xppython3.imgui_test', 'Simple IMGUI test plugin'
+        return 'PI_imgui v1.0', 'xppython3.imgui_test', 'Simple IMGUI test plugin'
 
     def XPluginEnable(self):
         return 1

@@ -26,7 +26,7 @@ Height = 0
 
 class PythonInterface:
     def __init__(self):
-        self.Name = "ExampleGauge"
+        self.Name = "ExampleGauge v1.0"
         self.Sig =  "SandyBarbour.Python.ExampleGauge"
         self.Desc = "A plug-in by Sandy Barbour for displaying a gauge."
 

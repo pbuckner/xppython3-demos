@@ -19,7 +19,7 @@ Result should be in your XPPython3.log similar to:
 class PythonInterface:
 
     def XPluginStart(self):
-        return 'PI_MultiProcess', 'xppython.demos.multiprocess', 'Example plugin using multiprocessing'
+        return 'PI_MultiProcess v1.0', 'xppython.demos.multiprocess', 'Example plugin using multiprocessing'
 
     def XPluginEnable(self):
         xp.log("Calling from PID {}".format(os.getpid()))

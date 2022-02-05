@@ -11,7 +11,7 @@ import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "ManagePlugins1"
+        self.Name = "ManagePlugins1 v1.0"
         self.Sig = "managePlugins.demos.xppython3"
         self.Desc = "A plugin that manages other plugins."
 

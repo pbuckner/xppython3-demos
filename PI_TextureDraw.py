@@ -104,6 +104,7 @@ def my_draw_tex(_inPhase, _inIsBefore, refCon):
     GL.glTexCoord2f(1, 1); GL.glVertex2f(x2, y2)  # would use 0,0 to 0,0.5 to 1,0.5, to 1,0.  Note that for X-Plane front facing polygons are clockwise
     GL.glTexCoord2f(1, 0); GL.glVertex2f(x2, y1)  # unless you change it; if you change it, change it back!
     GL.glEnd()
+    return 1
 
 
 class PythonInterface:
@@ -138,15 +139,18 @@ class PythonInterface:
         else:
             self.refCon = None
         # Note a change from original example:
+        #  Phase_Window:
+        #     Using this phase will result in a square floating "window" to be drawn, visible for any aircraft.
         #  Phase_FirstCockpit:
         #     Using this phase will result in a square floating "window" to be drawn, visible for any aircraft.
+        #     **IF** X-Plane is running in OpenGL mode. If Vulkan/Metal, this will not be draw.
         #  Phase_Gauges:
         #     This phase will result in drawing on the underlying gauge "screens" of the aircraft.
         #     Cessna 172 has no applicable gauge textures, so NOTHING WILL BE DRAWN!
         #     737-800 _does_ have gauge texture, so the drawing will be displayed across
         #     all of the screens & move in 3d. It is VERY SLOW, you have been warned.
         xp.registerDrawCallback(my_draw_tex, xp.Phase_FirstCockpit, 0, refCon=self.refCon)
-        return "Texture example", "xppython3.test.texture_example", "Shows how to use textures."
+        return "Texture example v1.0", "xppython3.test.texture_example", "Shows how to use textures."
 
     def XPluginStop(self):
         xp.unregisterDrawCallback(my_draw_tex, xp.Phase_FirstCockpit, 0, refCon=self.refCon)

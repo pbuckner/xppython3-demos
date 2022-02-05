@@ -13,7 +13,7 @@ import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "SimData1"
+        self.Name = "SimData1 v1.0"
         self.Sig = "simData1.demos.xppython3"
         self.Desc = "A plugin that changes sim data."
 

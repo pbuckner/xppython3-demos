@@ -28,7 +28,7 @@ class PythonInterface:
         """
         First we must fill in the passed in buffers to describe our
         plugin to the plugin-system."""
-        self.Name = "HelloWorld1"
+        self.Name = "HelloWorld1 v1.0"
         self.Sig = "helloWorld1.demos.xppython3"
         self.Desc = "A test plugin for the Python Interface."
         self.Clicked = False

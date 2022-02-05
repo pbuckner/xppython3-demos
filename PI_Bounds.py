@@ -46,7 +46,7 @@ def whichMonitor(winID):
 class PythonInterface:
     def XPluginStart(self):
         self.inVR = False
-        return os.path.basename(__file__), 'xppython.bounds', 'Simple monitor bounds reporter'
+        return 'PI_Bounds v.1', 'xppython.bounds', 'Simple monitor bounds reporter'
 
     def XPluginEnable(self):
         xp.log("ScreenSize: {} x {}".format(*xp.getScreenSize()))

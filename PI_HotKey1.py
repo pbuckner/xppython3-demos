@@ -14,7 +14,7 @@ import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "HotKey1"
+        self.Name = "HotKey1 v1.0"
         self.Sig = "hotKey1.demos.xppython3"
         self.Desc = "An example using a hotkey."
 

@@ -26,7 +26,7 @@ import xp
 class PythonInterface:
     def XPluginStart(self):
         # First set up our plugin info.
-        self.Name = "KeySniffer1"
+        self.Name = "KeySniffer1 v1.0"
         self.Sig = "keySniffer1.demos.xppython3"
         self.Desc = "An example sniffing keys."
         self.Char = 65

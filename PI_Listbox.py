@@ -8,7 +8,7 @@ import xp
 
 class PythonInterface:
     def __init__(self):
-        self.Name = "ListBox"
+        self.Name = "ListBox v1.0"
         self.Sig = "listbox.demos.xppython3"
         self.Desc = "Demonstrate ListBox"
         self.windowWidgetID = None

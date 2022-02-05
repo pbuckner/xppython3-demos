@@ -22,7 +22,7 @@ except ImportError:
 
 class PythonInterface:
     def __init__(self):
-        self.Name = "Camera1"
+        self.Name = "Camera1 v1.0"
         self.Sig = "camera1.demos.xppython3"
         self.Desc = "An example using the camera module."
         self.PlaneX = None

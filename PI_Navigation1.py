@@ -15,7 +15,7 @@ programFMC = 2
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "Navigation1"
+        self.Name = "Navigation1 v1.0"
         self.Sig = "navigation1.demos.xppython3"
         self.Desc = "A plugin that controls the FMC."
         mySubMenuItem = xp.appendMenuItem(xp.findPluginsMenu(), "Python - Navigation 1", 0)

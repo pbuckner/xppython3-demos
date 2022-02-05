@@ -4,7 +4,7 @@ from widgetMsgHelper import WidgetMessage
 
 class PythonInterface:
     def __init__(self):
-        self.Name = "HelloWidget1"
+        self.Name = "HelloWidget1 v1.0"
         self.Sig = "helloWidget1.demos.xppython3"
         self.Desc = "A test plugin for the Python Interface."
         self.myWidgetWindow = None

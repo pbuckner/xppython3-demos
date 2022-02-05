@@ -63,7 +63,7 @@ import XPPython3.xp as xp
 class PythonInterface:
     def XPluginStart(self):
         self.openGL = False
-        return os.path.basename(__file__), 'xppython3.opengl_test', 'Tests OpenGL installation'
+        return 'PI_OpenGL v1.0', 'xppython3.opengl_test', 'Tests OpenGL installation'
 
     def XPluginEnable(self):
         try:
@@ -175,7 +175,7 @@ class PythonInterface:
             GL.glEnd()
 
     def MouseClickCallback(self, *args):
-        pass
+        return 1
 
     def KeyCallback(self, *args):
         pass

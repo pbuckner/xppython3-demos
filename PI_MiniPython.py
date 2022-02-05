@@ -36,7 +36,7 @@ class PythonInterface:
         self.toggleCommandRef = xp.createCommand('xppython3/mini-python/toggle', 'Toggle Mini-Python window')
         xp.registerCommandHandler(self.toggleCommandRef, self.toggleCommand, 1, None)
         self.menuIdx = xp.appendMenuItemWithCommand(xp.findPluginsMenu(), 'Mini Python', self.toggleCommandRef)
-        return 'Mini Python Interpreter', 'xppython3.minipython', 'For debugging / testing: provides a mini python interpreter'
+        return 'Mini Python Interpreter v2.0', 'xppython3.minipython', 'For debugging / testing: provides a mini python interpreter'
 
     def resizePopup(self):
         # resizes to fit

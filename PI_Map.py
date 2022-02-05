@@ -25,7 +25,7 @@ SAMPLE_IMG = "Resources/plugins/map-sample-image.png"
 class PythonInterface():
     def __init__(self):
         self.Sig = "xppython3.PI_Map"
-        self.Name = "Map Demos"
+        self.Name = "Map Demos v1.0"
         self.Desc = "Map layer drawing example"
 
         self.s_num_cached_coords = 0

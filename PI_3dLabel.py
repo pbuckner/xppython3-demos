@@ -90,7 +90,7 @@ class PythonInterface:
         s_screen_width = xp.findDataRef("sim/graphics/view/window_width")
         s_screen_height = xp.findDataRef("sim/graphics/view/window_height")
 
-        outName = "Example label drawing"
+        outName = "Example label drawing v1.0"
         outSig = "com.laminar.example_label_drawing"
         outDesc = "A plugin that shows how to draw a 3-d-referenced label in 2-d"
         return outName, outSig, outDesc

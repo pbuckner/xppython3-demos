@@ -17,7 +17,7 @@ import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "SharedData1"
+        self.Name = "SharedData1 v1.0"
         self.Sig = "sharedData2.demos.xppython3"
         self.Desc = "A plugin that reads a shared data ref."
 
