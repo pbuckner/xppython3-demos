@@ -120,7 +120,7 @@ class PythonInterface:
     we simply don't use keyboard input.
     """
     def KeyCallback(self, inWindowID, inKey, inFlags, inVirtualKey, inRefcon, losingFocus):
-            pass
+        pass
 
     """
     MyHandleMouseClickCallback

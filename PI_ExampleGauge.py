@@ -39,7 +39,7 @@ class PythonInterface:
         self.GAUGE_TEXTURE = 1
         self.NEEDLE_TEXTURE = 2
         self.NEEDLE_TEXTURE_MASK = 3
-        
+
         self.ExampleGaugeDisplayPanelWindow = 1
 
         # Setup texture file locations
@@ -49,17 +49,17 @@ class PythonInterface:
 
         self.ExampleGaugePanelDisplayWindow = None
         self.DR_EngineN1 = xp.findDataRef("sim/flightmodel/engine/ENGN_N1_")
-        
+
         self.DR_RED = xp.findDataRef("sim/graphics/misc/cockpit_light_level_r")
         self.DR_GREEN = xp.findDataRef("sim/graphics/misc/cockpit_light_level_g")
         self.DR_BLUE = xp.findDataRef("sim/graphics/misc/cockpit_light_level_b")
-        self.ExampleGaugeHotKey = None 
+        self.ExampleGaugeHotKey = None
         self.Texture = []
 
     def XPluginStart(self):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        xp.registerDrawCallback(self.ExampleGaugeDrawCallback, xp.Phase_LastCockpit) # Doesn't work with "Phase_Gauges"
+        xp.registerDrawCallback(self.ExampleGaugeDrawCallback, xp.Phase_LastCockpit)  # Doesn't work with "Phase_Gauges"
 
         # Create our window, setup datarefs and register our hotkey.
         self.ExampleGaugePanelDisplayWindow = xp.createWindowEx(left=768, top=256, right=1024, bottom=0,
@@ -105,31 +105,31 @@ class PythonInterface:
             self.DrawGLScene(512, 250)
         return 1
 
-    """
-    ExampleGaugePanelWindowCallback
-    
-    This callback does not do any drawing as such.
-    We use the mouse callback below to handle dragging of the window
-    X-Plane will automatically do the redraw.
-    """
     def ExampleGaugePanelWindowCallback(self, inWindowID, inRefcon):
+        """
+        ExampleGaugePanelWindowCallback
+
+        This callback does not do any drawing as such.
+        We use the mouse callback below to handle dragging of the window
+        X-Plane will automatically do the redraw.
+        """
         pass
     
-    """
-    ExampleGaugePanelKeyCallback
-    
-    Our key handling callback does nothing in this plugin.  This is ok
-    we simply don't use keyboard input.
-    """
     def ExampleGaugePanelKeyCallback(self, inWindowID, inKey, inFlags, inVirtualKey, inRefcon, losingFocus):
+        """
+        ExampleGaugePanelKeyCallback
+
+        Our key handling callback does nothing in this plugin.  This is ok
+        we simply don't use keyboard input.
+        """
         pass
-    
-    """
-    ExampleGaugePanelMouseClickCallback
-    
-    Our mouse click callback updates the position that the windows is dragged to.
-    """
+
     def ExampleGaugePanelMouseClickCallback(self, inWindowID, x, y, inMouse, inRefcon):
+        """
+        ExampleGaugePanelMouseClickCallback
+
+        Our mouse click callback updates the position that the windows is dragged to.
+        """
         global Dragging, dX, dY, Width, Height
 
         if not self.ExampleGaugeDisplayPanelWindow:
@@ -147,7 +147,7 @@ class PythonInterface:
                 Height = Bottom - Top
                 Dragging = 1
 
-        if (inMouse == xp.MouseDrag):
+        if inMouse == xp.MouseDrag:
             # We are dragging so update the window position
             if (Dragging):
                 Left = (x - dX)
@@ -156,7 +156,7 @@ class PythonInterface:
                 Bottom = Top + Height
                 xp.setWindowGeometry(inWindowID, Left, Top, Right, Bottom)
 
-        if (inMouse == xp.MouseUp):
+        if inMouse == xp.MouseUp:
             Dragging = 0
             
         return 1
