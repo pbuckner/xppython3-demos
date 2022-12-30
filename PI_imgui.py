@@ -22,7 +22,8 @@ class PythonInterface:
         
     def XPluginStart(self):
         # Create command and attach to Menu, to create a new IMGUI window
-        self.cmd = xp.createCommand("xpppython3/{}/createWindow".format(os.path.basename(__file__)), "Create IMGUI window")
+        self.cmd = xp.createCommand(f"xpppython3/{os.path.basename(__file__)}/createWindow",
+                                    "Create IMGUI window")
         xp.registerCommandHandler(self.cmd, self.commandHandler, 1, self.cmdRef)
         xp.appendMenuItemWithCommand(xp.findPluginsMenu(), 'IMGUI Window', self.cmd)
 
@@ -45,7 +46,7 @@ class PythonInterface:
     def commandHandler(self, cmdRef, phase, refCon):
         if phase == xp.CommandBegin:
             # For fun, we'll create a NEW window each time the command is invoked.
-            self.createWindow('{} Window #{}'.format(os.path.basename(__file__), self.windowNumber))
+            self.createWindow(f'{os.path.basename(__file__)} Window #{self.windowNumber}')
             self.windowNumber += 1
         return 1
   
@@ -76,13 +77,14 @@ class PythonInterface:
         top_offset = 110
   
         # Create the imgui Window, and save it.
-        self.imgui_windows[title].update({'instance': xp_imgui.Window(left=l + left_offset,
-                                                                      top=t - top_offset,
-                                                                      right=l + left_offset + width,
-                                                                      bottom=t - (top_offset + height),
-                                                                      visible=1,
-                                                                      draw=self.drawWindow,
-                                                                      refCon=self.imgui_windows[title])})
+        self.imgui_windows[title].update({
+            'instance': xp_imgui.Window(left=l + left_offset,
+                                        top=t - top_offset,
+                                        right=l + left_offset + width,
+                                        bottom=t - (top_offset + height),
+                                        visible=1,
+                                        draw=self.drawWindow,
+                                        refCon=self.imgui_windows[title])})
   
         # and (optionally) set the title of the created window using .setTitle()
         self.imgui_windows[title]['instance'].setTitle(title)
@@ -104,8 +106,10 @@ class PythonInterface:
         changed, refCon['text'] = imgui.input_text("Text Input", refCon['text'], 50)
   
         # CHECKBOX
-        changed, refCon['checkbox1'] = imgui.checkbox(label="Check 1", state=refCon['checkbox1'])
-        changed, refCon['checkbox2'] = imgui.checkbox(label="Check 2", state=refCon['checkbox2'])
+        changed, refCon['checkbox1'] = imgui.checkbox(label="Check 1",
+                                                      state=refCon['checkbox1'])
+        changed, refCon['checkbox2'] = imgui.checkbox(label="Check 2",
+                                                      state=refCon['checkbox2'])
   
         # RADIO
         if imgui.radio_button("A", refCon['radio'] == 0):
