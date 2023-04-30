@@ -10,6 +10,14 @@ from XPPython3.utils import paste
 import xp
 from XPListBox import XPCreateListBox, Prop
 
+# Change log
+# v2.1 * Fixed scroll position of textWidget: on long input, we didn't reset left-most scroll position
+#      * Automatically store and restore 'history'... To maintain sanity, maximum lines restored is Max_History
+#      * Also, on input, we _always_ scroll to the bottom (you can scroll up, but as input is added, we'll
+#        scroll back to the bottom.
+
+Max_History = 20  # read in this number of (unique) previous command history on startup.
+History_Filename = 'minipython_history.txt'
 
 class IncompleteError(Exception):
     pass
@@ -17,10 +25,9 @@ class IncompleteError(Exception):
 
 class PythonInterface:
     def __init__(self):
-        self.prevCommands = []
         self.historyIdx = -1
         self.partialCommand = []
-        self.prevCommands = ['>>> ', ]
+        self.prevCommands = None
         self.historyIdx = -1
         self.widget1 = None
         self.textWidget = None
@@ -36,7 +43,22 @@ class PythonInterface:
         self.toggleCommandRef = xp.createCommand('xppython3/mini-python/toggle', 'Toggle Mini-Python window')
         xp.registerCommandHandler(self.toggleCommandRef, self.toggleCommand, 1, None)
         self.menuIdx = xp.appendMenuItemWithCommand(xp.findPluginsMenu(), 'Mini Python', self.toggleCommandRef)
-        return 'Mini Python Interpreter v2.1', 'xppython3.minipython', 'For debugging / testing: provides a mini python interpreter'
+        self.prevCommands = []
+        try:
+            filename = os.path.join(os.path.dirname(xp.getPrefsPath()), History_Filename)
+            with open(filename, 'r', encoding='utf-8') as fp:
+                for line in fp.readlines():
+                    if line.startswith('>>> exit()') or line == '>>> \n':
+                        continue
+                    if line[0:-1] not in self.prevCommands:
+                        self.prevCommands.append(line[0:-1])
+            self.prevCommands = self.prevCommands[-Max_History:]
+        except OSError:
+            pass
+        self.prevCommands.append('>>> ')
+        return ('Mini Python Interpreter v2.1',
+                'xppython3.minipython',
+                'For debugging / testing: provides a mini python interpreter')
 
     def resizePopup(self):
         # resizes to fit
@@ -121,13 +143,13 @@ class PythonInterface:
         xp.addWidgetCallback(self.widget1, self.widgetMsgs)
         xp.addWidgetCallback(self.textWidget, self.textEdit)
 
-    def textEdit(self, message, widgetID, param1, param2):
+    def textEdit(self, message, widgetID, param1, _param2):
         if widgetID != self.textWidget:
-            xp.log("got textEdit callback but not for correct widget: {}".format(widgetID))
+            xp.log(f"got textEdit callback but not for correct widget: {widgetID}")
             return 0
         # Normally, most key presses (of printable keys) is handled by the TextField widget
         # Here, we want to intercept the keypress _first_
-        if message == xp.Msg_KeyPress and not (param1[1] & xp.UpFlag):
+        if message == xp.Msg_KeyPress and not param1[1] & xp.UpFlag:
             ignoreFirst = 4
             if param1[1] & xp.ControlFlag:
                 if param1[2] == xp.VK_K:
@@ -162,7 +184,7 @@ class PythonInterface:
                 return 1
 
             if param1[2] == xp.VK_BACK:
-                if (ignoreFirst == xp.getWidgetProperty(widgetID, xp.Property_EditFieldSelStart, None)):
+                if ignoreFirst == xp.getWidgetProperty(widgetID, xp.Property_EditFieldSelStart, None):
                     return 1
                 start = max(ignoreFirst, xp.getWidgetProperty(widgetID, xp.Property_EditFieldSelStart, None) - 1)
                 text = xp.getWidgetDescriptor(widgetID)
@@ -193,7 +215,7 @@ class PythonInterface:
 
     def widgetMsgs(self, message, widgetID, param1, param2):
         if widgetID != self.widget1:
-            xp.log("got widgetMsg callback but not for correct widget: {}".format(widgetID))
+            xp.log(f"got widgetMsg callback but not for correct widget: {widgetID}")
             return 0
         if message == xp.Msg_Reshape:
             # -- regenerate widgets and repopulate with data...
@@ -228,7 +250,19 @@ class PythonInterface:
                 if param1[2] == xp.VK_RETURN and param1[1] & xp.DownFlag:
                     execute = True
         if execute:
-            self.try_execute(xp.getWidgetDescriptor(self.textWidget))
+            # See if we need to scroll to the bottom
+            position = xp.getWidgetProperty(self.listboxWidget.widgetID, Prop.ListBoxScrollBarSliderPosition)
+            max_items = xp.getWidgetProperty(self.listboxWidget.widgetID, Prop.ListBoxMaxListBoxItems)
+            if position >= max_items:
+                # Yes, scroll to the bottom
+                xp.setWidgetProperty(self.listboxWidget.widgetID, Prop.ListBoxScrollBarSliderPosition, max_items - 1)
+            try:
+                self.try_execute(xp.getWidgetDescriptor(self.textWidget))
+            except SystemExit:
+                xp.hideWidget(self.widget1)
+            except Exception as e:
+                xp.log(f"Caught other exception in widget messages, after try_execute: {e}")
+                xp.log()
             return 1
         return 0
 
@@ -250,6 +284,13 @@ class PythonInterface:
         return 1
 
     def XPluginStop(self):
+        if self.prevCommands:
+            # Write command history to file
+            filename = os.path.join(os.path.dirname(xp.getPrefsPath()), History_Filename)
+            with open(filename, 'w', encoding='utf-8') as fp:
+                for idx, i in enumerate(self.prevCommands):
+                    fp.write(i + '\n')
+
         if self.toggleCommandRef:
             xp.unregisterCommandHandler(self.toggleCommandRef,
                                         self.toggleCommand,
@@ -263,7 +304,15 @@ class PythonInterface:
         # initialize with leading blank lines -- this puts the "next" input at the very
         # bottom of the window. This mimics scrolling input better.
         self.createPopup(popout=False)
-        for _i in range(xp.getWidgetProperty(self.listboxWidget.widgetID, Prop.ListBoxMaxListBoxItems, None) - 2):
+        num_added = 0
+        for line in self.prevCommands[0:-1]:
+            if line != '>>> ':
+                num_added += 1
+                self.listboxWidget.add(line)
+
+        num_blank_lines = (xp.getWidgetProperty(self.listboxWidget.widgetID, Prop.ListBoxMaxListBoxItems, None) - 2 -
+                           num_added)
+        for _i in range(num_blank_lines):
             self.listboxWidget.add('')
 
         return 1
@@ -281,6 +330,7 @@ class PythonInterface:
         pass
 
     def try_execute(self, s):
+        xp.setWidgetProperty(self.textWidget, xp.Property_ScrollPosition, 0)  # reset left-most in text widget
         if s.startswith('>>> /'):
             self.listboxWidget.add(s)
             items = [x for x in dir(xp) if re.search(s[5:], x, flags=re.IGNORECASE)]
@@ -320,6 +370,8 @@ class PythonInterface:
                 xp.setWidgetDescriptor(self.textWidget, '... ')
         except IncompleteError:
             pass
+        except SystemExit:
+            raise
         except Exception:
             # do it anyway -- this captures the exception output and
             # adds it to the window
@@ -345,9 +397,11 @@ class PythonInterface:
                 print(f">>> {s}")
                 try:
                     exec(compile(s, '<string>', 'single'), globals())
+                except SystemExit:
+                    raise
                 except Exception:
-                    type, value, tb = sys.exc_info()
-                    traceback.print_exception(type, value, tb)
+                    e_type, value, tb = sys.exc_info()
+                    traceback.print_exception(e_type, value, tb)
 
         s = f.getvalue().strip()
         if s:
