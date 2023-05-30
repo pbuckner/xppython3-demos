@@ -16,7 +16,7 @@ from XPPython3 import xp
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "InputOutput1 v1.0"
+        self.Name = "InputOutput1 v1.01"
         self.Sig = "SandyBarbour.Python.InputOutput1"
         self.Desc = "A plug-in that handles data Input/Output."
 
@@ -115,7 +115,7 @@ class PythonInterface:
         xp.setDatavf(self.OutputDataRef[0], self.NewN1, 0, self.NumberOfEngines)
 
         # This means call us ever 10ms.
-        return 1.0
+        return 0.01
 
     def InputOutputMenuHandler(self, inMenuRef, inItemRef):
         # If menu selected create our widget dialog
