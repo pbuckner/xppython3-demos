@@ -1,7 +1,7 @@
 # https://developer.x-plane.com/code-sample/texturedraw/
 
 from OpenGL import GL
-import xp
+from XPPython3 import xp
 try:
     from numpy import put, zeros, uint8
     use_numpy = True
@@ -114,7 +114,7 @@ class PythonInterface:
         g_tex_num = xp.generateTextureNumbers(1)[0]
         xp.bindTexture2d(g_tex_num, 0)
         # Init to black for now.
-        buffer = [0, ] * (WIDTH * HEIGHT * 4)
+        buffer = bytearray(WIDTH * HEIGHT * 4)
         # The first time we must use glTexImage2D.
         GL.glTexImage2D(
             GL.GL_TEXTURE_2D,
@@ -149,11 +149,11 @@ class PythonInterface:
         #     Cessna 172 has no applicable gauge textures, so NOTHING WILL BE DRAWN!
         #     737-800 _does_ have gauge texture, so the drawing will be displayed across
         #     all of the screens & move in 3d. It is VERY SLOW, you have been warned.
-        xp.registerDrawCallback(my_draw_tex, xp.Phase_FirstCockpit, 0, refCon=self.refCon)
+        xp.registerDrawCallback(my_draw_tex, xp.Phase_Window, 0, refCon=self.refCon)
         return "Texture example v1.0", "xppython3.test.texture_example", "Shows how to use textures."
 
     def XPluginStop(self):
-        xp.unregisterDrawCallback(my_draw_tex, xp.Phase_FirstCockpit, 0, refCon=self.refCon)
+        xp.unregisterDrawCallback(my_draw_tex, xp.Phase_Window, 0, refCon=self.refCon)
         xp.bindTexture2d(g_tex_num, 0)
         GL.glDeleteTextures(1, g_tex_num)
 

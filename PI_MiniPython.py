@@ -7,8 +7,8 @@ import webbrowser
 import contextlib
 import codeop
 from XPPython3.utils import paste
-import xp
-from XPListBox import XPCreateListBox, Prop
+from XPPython3 import xp
+from XPPython3.XPListBox import XPCreateListBox, Prop
 
 # Change log
 # v2.1 * Fixed scroll position of textWidget: on long input, we didn't reset left-most scroll position

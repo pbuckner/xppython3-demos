@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import pyglet
+import pyglet  # type:ignore
 from pyglet import gl
 from pyimgui_demowindow import show_demo_window
 

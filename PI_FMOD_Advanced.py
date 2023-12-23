@@ -1,20 +1,20 @@
-import xp
+from XPPython3 import xp
 # Modeled after
 # Bill Good's demo: https://github.com/sparker256/xp12-fmod-sdk-demo/blob/main/src/xp12_fmod_sdk_demo.cpp */
 
 # use ctypes to load fmod libraries, and define PyCapsule_GetPointer to extra C-language pointer
 # from a capsule
-import ctypes
+import ctypes   # type:ignore
 import platform
 if platform.system() == 'Darwin':
-    studio_dll = ctypes.cdll.LoadLibrary('libfmodstudio.dylib')
-    fmod_dll = ctypes.cdll.LoadLibrary('libfmod.dylib')
+    studio_dll = ctypes.cdll.LoadLibrary('libfmodstudio.dylib')    # type:ignore
+    fmod_dll = ctypes.cdll.LoadLibrary('libfmod.dylib')   # type:ignore
 elif platform.system() == 'Windows':
-    studio_dll = ctypes.windll.LoadLibrary('fmodstudio')
-    fmod_dll = ctypes.windll.LoadLibrary('fmod')
+    studio_dll = ctypes.windll.LoadLibrary('fmodstudio')  # type:ignore
+    fmod_dll = ctypes.windll.LoadLibrary('fmod')   # type:ignore
 elif platform.system() == 'Linux':
-    studio_dll = ctypes.cdll.LoadLibrary('libfmodstudio.so.13')
-    fmod_dll = ctypes.cdll.LoadLibrary('libfmod.so.13')
+    studio_dll = ctypes.cdll.LoadLibrary('libfmodstudio.so.13')   # type:ignore
+    fmod_dll = ctypes.cdll.LoadLibrary('libfmod.so.13')   # type:ignore
 
 def PyCapsule_GetPointer(capsule, name):
     # convenience function to get a void * out of a python capsule

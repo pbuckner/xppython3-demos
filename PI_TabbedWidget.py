@@ -1,4 +1,5 @@
-import xp
+from typing import Any
+from XPPython3 import xp
 
 
 class PythonInterface:
@@ -22,8 +23,8 @@ class PythonInterface:
             self.myWidgetWindow = None
 
     def createWidgetWindow(self):
-        widgetWindow = {'widgetID': None,  # the ID of the main window containing all other widgets
-                        'widgets': {}  # hash of all child widgets we care about
+        widgetWindow:dict[str, Any] = {'widgetID': None,  # the ID of the main window containing all other widgets
+                                       'widgets': {}  # hash of all child widgets we care about
         }
         left = 100
         top = 200

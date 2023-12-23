@@ -1,6 +1,6 @@
 import os
 try:
-    import xp
+    from XPPython3 import xp
 except ImportError:
     # 'xp' won't be available to the python child process, so guard against import failure
     pass
@@ -29,6 +29,10 @@ class PythonInterface:
         p = multiprocessing.Process(target=f, args=(child_conn, ))
         p.start()
         xp.log('{}'.format(parent_conn.recv()))
+        # !!!! Note that 'join' will wait untill the called process has finished. This means
+        # X-Plane will wait for this XPluginEnable() to complete prior to continuing.
+        #
+        # Alternatively, don't "join" here... Join in XPluginDisable(), for example
         p.join()
         return 1
 

@@ -1,9 +1,5 @@
 from XPPython3 import xp
-try:
-    # earlier versions of xp.py were missing the shortcut for MSG_RELEASE_PLANES
-    MSG_RELEASE_PLANES = xp.MSG_RELEASE_PLANES
-except AttributeError:
-    from XPLMPlugin import XPLM_MSG_RELEASE_PLANES as MSG_RELEASE_PLANES
+MSG_RELEASE_PLANES = xp.MSG_RELEASE_PLANES
 
 # ORIGINAL IN C:
 #   https://developer.x-plane.com/code-sample/overriding-tcas/
@@ -21,7 +17,7 @@ nmtomtr = 1852.0
 TARGETS = 4
 
 # datarefs we are going to write to
-modeSid = None
+modeS_id = None
 flt_id = None
 brg = None
 dis = None
@@ -46,8 +42,8 @@ absalts = [1000, 1500, 2000, 4000]
 dists = [6 * nmtomtr, 5 * nmtomtr, 4 * nmtomtr, 3 * nmtomtr]
 
 # this flightloop callback will be called every frame to update the targets
-relbrgs = [None, ] * TARGETS
-relalts = [None, ] * TARGETS
+relbrgs = [0.0, ] * TARGETS
+relalts = [0.0, ] * TARGETS
 
 
 def floop_cb(elapsed1, elapsed2, ctr, refcon):
@@ -120,7 +116,7 @@ def my_planes_now():
 
     # this is extra: re-read using xp.getDatab() so you can see how it's done
     xp.log("Size of dataref array is {}".format(xp.getDatab(flt_id, None, 0, 0)))
-    data_array = []
+    data_array:list[int] = []
     # Since we know it's 64 * 8 bytes long, we'll go through the array 8 bytes at a time
     for i in range(0, 64 * 8, 8):
         xp.getDatab(flt_id, data_array, i, 8)
@@ -151,7 +147,7 @@ def someone_elses_planes_now():
 
 # this is a callback that will be called by X-Plane, if we asked for planes, but another plugin had the planes at the time
 # but now this other plugin has given up the planes. They essentially yielded control to us. So the planes are up for grabs again!!
-def retry_acquiring_planes():
+def retry_acquiring_planes(ignored):
 
     if not xp.acquirePlanes(None, retry_acquiring_planes, None):
         # Damn, someone else cut imn the queue before us!
@@ -214,7 +210,8 @@ class PythonInterface:
         return 1
 
     def XPluginDisable(self):
-        someone_elses_planes_now()
+        if plugin_owns_tcas:
+            someone_elses_planes_now()
 
     def XPluginReceiveMessage(self, msg_from, msg, param):
         if msg == MSG_RELEASE_PLANES:

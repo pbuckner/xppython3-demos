@@ -9,7 +9,7 @@ key the user can press; in this case, this plugin maps F1 being pressed down to 
 the sim to say stuff.
 """
 
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:

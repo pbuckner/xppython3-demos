@@ -1,7 +1,7 @@
 import threading
 import serial
 import serial.tools.list_ports
-import xp
+from XPPython3 import xp
 
 
 def find_arduino():

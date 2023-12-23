@@ -20,7 +20,7 @@ setting up key commands (since they allow for separate binding of the numeric
 key pad).
 """
 
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:
@@ -34,19 +34,17 @@ class PythonInterface:
         self.Flags = 0
 
         # Now create a new window.  Pass in our callbacks.
-        windowInfo = (50, 750, 350, 700,
-                      1,
-                      self.MyDrawWindowCallback,
-                      self.MyHandleMouseClickCallback,
-                      self.MyHandleKeyCallback,
-                      self.MyHandleCursorCallback,
-                      self.MyHandleMouseWheelCallback,
-                      0,
-                      xp.WindowDecorationRoundRectangle,
-                      xp.WindowLayerFloatingWindows,
-                      None)
-
-        self.Window = xp.createWindowEx(windowInfo)
+        self.Window = xp.createWindowEx(50, 750, 350, 700,
+                                        1,
+                                        self.MyDrawWindowCallback,
+                                        self.MyHandleMouseClickCallback,
+                                        self.MyHandleKeyCallback,
+                                        self.MyHandleCursorCallback,
+                                        self.MyHandleMouseWheelCallback,
+                                        0,
+                                        xp.WindowDecorationRoundRectangle,
+                                        xp.WindowLayerFloatingWindows,
+                                        None)
 
         # Finally register our key sniffer.
         xp.registerKeySniffer(self.MyKeySniffer, 1, 0)
@@ -68,7 +66,7 @@ class PythonInterface:
     def MyHandleCursorCallback(self, inWindowID, x, y, inRefcon):
         return xp.CursorDefault
 
-    def MyHandleMouseWheelCallback(self, inWindowID, x, y, inMouse, inRefcon):
+    def MyHandleMouseWheelCallback(self, inWindowID, x, y, wheel, clicks, inRefcon):
         return 1
 
     # MyDrawWindowCallback

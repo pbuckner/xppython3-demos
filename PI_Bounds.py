@@ -1,4 +1,4 @@
-import xp
+from XPPython3 import xp
 
 
 def whichMonitor(winID):
@@ -15,7 +15,7 @@ def whichMonitor(winID):
     def getMonitorBoundsGlobal(idx, left, t, r, b, data):
         data[idx] = (left, t, r, b)
 
-    data = {}
+    data:dict[int, list[int]] = {}
     xp.getAllMonitorBoundsGlobal(getMonitorBoundsGlobal, data)
     if not data:
         return -1
@@ -52,8 +52,8 @@ class PythonInterface:
         left, top, right, bottom = xp.getScreenBoundsGlobal()
         describe("ScreenBoundsGlobal", left, top, right, bottom)
 
-        self.monitorBoundsGlobal = {}
-        self.monitorBoundsGlobalOS = {}
+        self.monitorBoundsGlobal:dict[int, list[int]] = {}
+        self.monitorBoundsGlobalOS:dict[int, list[int]] = {}
 
         xp.getAllMonitorBoundsGlobal(self.getMonitorBoundsGlobal, self.monitorBoundsGlobal)
         for i in self.monitorBoundsGlobal:
@@ -68,11 +68,9 @@ class PythonInterface:
         xp.log("Mouse is: {}".format(xp.getMouseLocationGlobal()))
         decoration = xp.WindowDecorationRoundRectangle
         layer = xp.WindowLayerFloatingWindows
-        self.refcon = []
-        pos = [0, 50, 200, -50, 1,
-               self.draw, self.click, self.key, self.cursor, self.wheel, self.refcon,
-               decoration, layer, None]
-        self.winID = xp.createWindowEx(pos)
+        self.winID = xp.createWindowEx(0, 50, 200, -50, 1,
+                                       self.draw, self.click, self.key, self.cursor, self.wheel, None,
+                                       decoration, layer, None)
         self.onMonitor = None
 
         # Positioning Mode:
@@ -120,19 +118,19 @@ class PythonInterface:
             # You draw at getWindowGeomtery() locations.
             # The _location_ of the poppedout window is getWindowGeometryOS()
             leftOS, topOS, rightOS, bottomOS = xp.getWindowGeometryOS(winID)
-            w = xp.measureString(xp.Font_Basic, "{}".format((rightOS, bottomOS)))
-            xp.drawString((1., 1., 1.), left, top - h, "{}".format((leftOS, topOS)), None, xp.Font_Basic)
-            xp.drawString((1., 1., 1.), left, int((top + bottom) / 2), "Monitor #{}".format(idx), None, xp.Font_Basic)
-            xp.drawString((1., 1., 1.), right - int(w), bottom, "{}".format((rightOS, bottomOS)), None, xp.Font_Basic)
+            w = int(xp.measureString(xp.Font_Basic, f"{(rightOS, bottomOS)}"))
+            xp.drawString((1., 1., 1.), left, top - h, f"{(leftOS, topOS)}", None, xp.Font_Basic)
+            xp.drawString((1., 1., 1.), left, int((top + bottom) / 2), f"Monitor #{idx}", None, xp.Font_Basic)
+            xp.drawString((1., 1., 1.), right - w, bottom, f"{(rightOS, bottomOS)}", None, xp.Font_Basic)
         elif xp.windowIsInVR(winID):
             width, height = xp.getWindowGeometryVR(winID)
-            xp.drawString((1., 1., 1.), left, top - h, "{} x {}".format(width, height), None, xp.Font_Basic)
+            xp.drawString((1., 1., 1.), left, top - h, f"{width} x {height}", None, xp.Font_Basic)
             xp.drawString((1., 1., 1.), left, int((top + bottom) / 2), "VR", None, xp.Font_Basic)
         else:
-            w = xp.measureString(xp.Font_Basic, "{}".format((right, bottom)))
-            xp.drawString((1., 1., 1.), left, top - h, "{}".format((left, top)), None, xp.Font_Basic)
-            xp.drawString((1., 1., 1.), left, int((top + bottom) / 2), "Monitor #{}".format(idx), None, xp.Font_Basic)
-            xp.drawString((1., 1., 1.), right - int(w), bottom, "{}".format((right, bottom)), None, xp.Font_Basic)
+            w = int(xp.measureString(xp.Font_Basic, f"{(right, bottom)}"))
+            xp.drawString((1., 1., 1.), left, top - h, f"{(left, top)}", None, xp.Font_Basic)
+            xp.drawString((1., 1., 1.), left, int((top + bottom) / 2), f"Monitor #{idx}", None, xp.Font_Basic)
+            xp.drawString((1., 1., 1.), right - w, bottom, f"{(right, bottom)}", None, xp.Font_Basic)
 
         # Note: if we _want_ to let the user move the window, we have to set
         # positioning mode to WindowPositionFree. BUT, if we've not update the

@@ -6,16 +6,16 @@ Ported to XPPython3 by Peter Buckner - 2-Aug-2020
 
 This example demonstrates how to interact with X-Plane by locating plugins
 """
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:
     def XPluginStart(self):
-        self.Name = "ManagePlugins1 v1.0"
+        self.Name = "ManagePlugins1 v1.1"
         self.Sig = "managePlugins.demos.xppython3"
         self.Desc = "A plugin that manages other plugins."
 
-        mySubMenuItem = xp.appendMenuItem(xp.findPluginsMenu(), "Python - Manage Plugins 1", 0)
+        mySubMenuItem = xp.appendMenuItem(xp.findPluginsMenu(), "Python - Manage Plugins 1.1", 0)
         self.myMenu = xp.createMenu("Manage Plugins 1", xp.findPluginsMenu(), mySubMenuItem, self.MyMenuHandlerCallback, 0)
         xp.appendMenuItem(self.myMenu, "Disable Others", 0)
         xp.appendMenuItem(self.myMenu, "Enable All", 1)
@@ -35,14 +35,15 @@ class PythonInterface:
 
     def MyMenuHandlerCallback(self, inMenuRef, inItemRef):
         # This is the menu handler.  We will go through each plugin.
-        for n in range(xp.countPlugins() - 1):
+        for n in range(xp.countPlugins()):
             plugin = xp.getNthPlugin(n)
             me = xp.getMyID()
 
             # Check to see if the plugin is us.  If so, don't
             # disable ourselves!
 
-            print("plugin=%d,me=%d\n" % (plugin, me))
+            pluginInfo = xp.getPluginInfo(plugin)
+            xp.log(f"plugin={plugin} ({pluginInfo.name}), me={me}")
             if plugin != me:
                 # Disable based on the item ref for the menu.
                 if inItemRef == 0:

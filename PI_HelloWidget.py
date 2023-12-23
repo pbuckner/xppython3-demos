@@ -1,5 +1,6 @@
-import xp
-from widgetMsgHelper import WidgetMessage
+from typing import Any
+from XPPython3 import xp
+from XPPython3.utils.widgetMsgHelper import WidgetMsgHelper
 
 
 class PythonInterface:
@@ -29,8 +30,8 @@ class PythonInterface:
         pass
 
     def createWidgetWindow(self):
-        widgetWindow = {'widgetID': None,  # the ID of the main window containing all other widgets
-                        'widgets': {}  # hash of all child widgets we care about
+        widgetWindow:dict[str, Any] = {'widgetID': None,  # the ID of the main window containing all other widgets
+                                       'widgets': {}  # hash of all child widgets we care about
         }
         widgetWindow['widgetID'] = xp.createWidget(100, 200, 600, 50, 1, "Widget Window Test",
                                                    1, 0, xp.WidgetClass_MainWindow)
@@ -69,7 +70,7 @@ class PythonInterface:
     def widgetCallback(self, inMessage, inWidget, inParam1, inParam2):
         self.widgetMsgCounter[inMessage] = 1 + self.widgetMsgCounter.setdefault(inMessage, 0)
         if self.widgetMsgCounter[inMessage] < 10:
-            print('{} {}'.format(inWidget, WidgetMessage(inMessage, inParam1, inParam2)))
+            xp.log(f'{inWidget} {WidgetMsgHelper(inMessage, inParam1, inParam2)}')
         return self.mainWindowCallback(inMessage, inWidget, inParam1, inParam2)
 
     def mainWindowCallback(self, inMessage, inWidget, inParam1, inParam2):

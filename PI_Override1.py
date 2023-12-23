@@ -205,7 +205,7 @@ class PythonInterface:
 
     def GetDataRefState(self, DataRefID):
         if (DataRefID == self.SpecialDataRef):
-            self.IntVals = []
+            self.IntVals:list[int] = []
             xp.getDatavi(DataRefID, self.IntVals, 0, 8)
             DataRefi = self.IntVals[0]
         else:

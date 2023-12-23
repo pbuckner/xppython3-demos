@@ -11,10 +11,11 @@ This plugin registers a new view with the sim that orbits the aircraft.  We do t
 3. Registering a new camera control funcioin that ends when a new view is picked.
 """
 
+from typing import Any
 import math
-import xp
+from XPPython3 import xp
 try:
-    from XPListBox import XPCreateListBox
+    from XPPython3.XPListBox import XPCreateListBox
 except ImportError:
     print("XPListBox is a custom python file provided with XPPython3, and required by this example you could copy it into PythonPlugins folder")
     raise
@@ -71,7 +72,7 @@ class PythonInterface:
         # Now we control the camera until the view changes.
         xp.controlCamera(xp.ControlCameraUntilViewChanges, self.MyOrbitPlaneFunc, 0)
 
-    def MyOrbitPlaneFunc(self, outCameraPosition, inIsLosingControl, inRefcon):
+    def MyOrbitPlaneFunc(self, outCameraPosition:list[float], inIsLosingControl:int, inRefcon:Any):
         """
         MyOrbitPlaneFunc
 

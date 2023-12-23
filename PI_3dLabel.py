@@ -36,15 +36,15 @@ def DrawCallback1(inPhase, inIsBefore, inRefcon):
                xp.getDataf(s_pos_z),
                1.0]
 
-    mv = []
-    proj = []
+    mv:list[float] = []
+    proj:list[float] = []
 
     # Read the model view and projection matrices from this frame
     xp.getDatavf(s_matrix_wrl, mv, 0, 16)
     xp.getDatavf(s_matrix_proj, proj, 0, 16)
 
-    acf_eye = [None, ] * 4
-    acf_ndc = [None, ] * 4
+    acf_eye = [0.0, ] * 4
+    acf_ndc = [0.0, ] * 4
 
     # Simulate the OpenGL transformation to get screen coordinates.
     mult_matrix_vec(acf_eye, mv, acf_wrl)

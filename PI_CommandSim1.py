@@ -8,7 +8,7 @@ This function demonstrates how to send commands to the sim.  Commands allow you 
 any keystroke or joystick button press or release.
 """
 
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:

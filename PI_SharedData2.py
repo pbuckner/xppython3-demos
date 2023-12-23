@@ -12,7 +12,7 @@ by the other plugin.
 (This plugin does not attempt to access the Shared dataref from PI_SharedData1)
 """
 
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:

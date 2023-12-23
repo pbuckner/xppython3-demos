@@ -21,19 +21,19 @@ class PythonInterface:
         self.MenuItem1 = 0
         self.NavTypeLinePosition = 0
 
-        self.NavTypeLookup = [["Unknown", xp.Nav_Unknown],
-                              ["Airport", xp.Nav_Airport],
-                              ["NDB", xp.Nav_NDB],
-                              ["VOR", xp.Nav_VOR],
-                              ["ILS", xp.Nav_ILS],
-                              ["Localizer", xp.Nav_Localizer],
-                              ["Glide Slope", xp.Nav_GlideSlope],
-                              ["Outer Marker", xp.Nav_OuterMarker],
-                              ["Middle Marker", xp.Nav_MiddleMarker],
-                              ["Inner Marker", xp.Nav_InnerMarker],
-                              ["Fix", xp.Nav_Fix],
-                              ["DME", xp.Nav_DME],
-                              ["Lat/Lon", xp.Nav_LatLon]]
+        self.NavTypeLookup:list[tuple[str, int]] = [("Unknown", xp.Nav_Unknown),
+                                                    ("Airport", xp.Nav_Airport),
+                                                    ("NDB", xp.Nav_NDB),
+                                                    ("VOR", xp.Nav_VOR),
+                                                    ("ILS", xp.Nav_ILS),
+                                                    ("Localizer", xp.Nav_Localizer),
+                                                    ("Glide Slope", xp.Nav_GlideSlope),
+                                                    ("Outer Marker", xp.Nav_OuterMarker),
+                                                    ("Middle Marker", xp.Nav_MiddleMarker),
+                                                    ("Inner Marker", xp.Nav_InnerMarker),
+                                                    ("Fix", xp.Nav_Fix),
+                                                    ("DME", xp.Nav_DME),
+                                                    ("Lat/Lon", xp.Nav_LatLon)]
 
         # Create our menu
         Item = xp.appendMenuItem(xp.findPluginsMenu(), "Python - FMSUtility 1", 0)
@@ -372,7 +372,7 @@ class PythonInterface:
                 Buffer = xp.getWidgetDescriptor(self.AltitudeEdit)
                 Altitude = int(Buffer)
                 Buffer = xp.getWidgetDescriptor(self.NavTypeText)
-                NavType = int(Buffer)
+                NavType:xp.XPLMNavType = xp.XPLMNavType(int(Buffer))
                 Buffer = xp.getWidgetDescriptor(self.AirportIDEdit)
                 IDFragment = Buffer
                 xp.setFMSEntryInfo(Index, xp.findNavAid(None, IDFragment, None, None, None, NavType), Altitude)

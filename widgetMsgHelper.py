@@ -1,4 +1,6 @@
-import xp
+from typing import Dict, Callable, Union
+from typing_extensions import TypedDict
+from XPPython3 import xp
 
 
 class WidgetMessage:
@@ -8,7 +10,8 @@ class WidgetMessage:
     example:
         print(WidgetMessage(inMessage, inParam1, inParam2))
     """
-    msgs = {
+    MsgHandler = TypedDict('MsgHandler', {'name': str, 'param1': Callable[[int], str], 'param2': Callable[[int], str]})
+    msgs:Dict[int, MsgHandler] = {
         xp.Msg_None: {'name': 'None',
                       'param1': lambda x: '<should never be called>',
                       'param2': lambda x: '<>', },
@@ -68,7 +71,7 @@ class WidgetMessage:
                                    'param2': lambda x: '<>', },
         xp.Msg_PropertyChanged: {'name': 'PropertyChanged',
                                  'param1': lambda x: WidgetMessage.propertyID(x),
-                                 'param2': lambda x: x, },
+                                 'param2': lambda x: str(x), },
         xp.Msg_MouseWheel: {'name': 'MouseWheel',
                             'param1': lambda x: WidgetMessage.mouseState(x),
                             'param2': lambda x: '<>', },

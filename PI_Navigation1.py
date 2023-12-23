@@ -7,7 +7,7 @@ Ported to XPPython3 by Peter Buckner - 2-Aug-2020
 This example demonstrates how to use the FMC and the navigation databases in
 X-Plane.
 """
-import xp
+from XPPython3 import xp
 
 nearestAirport = 1
 programFMC = 2

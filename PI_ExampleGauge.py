@@ -98,7 +98,7 @@ class PythonInterface:
         # Do the actual drawing, but only if our window is active
         if (self.ExampleGaugeDisplayPanelWindow):
             # Get our current N1 for each engine
-            self.EngineN1 = []
+            self.EngineN1:list[float] = []
             count = xp.getDatavf(self.DR_EngineN1, self.EngineN1, 0, 8)
             # Convert N1 to rotation to match gauge
             self.EngineN1[0] = float((270 * self.EngineN1[0] / 100.0) - 135)

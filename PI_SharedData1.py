@@ -41,7 +41,7 @@ Clicking on the window of this plugin, we'll get and print (to XPPython3.log)
 the current value of the shared data.
 """
 
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:
@@ -49,17 +49,16 @@ class PythonInterface:
         self.Name = "SharedData1 v1.0"
         self.Sig = "sharedData1.demos.xppython3"
         self.Desc = "A plugin that shares a data ref."
-        windowInfo = (50, 600, 300, 400, 1,
-                      self.DrawWindowCallback,
-                      self.MouseClickCallback,
-                      self.KeyCallback,
-                      self.CursorCallback,
-                      self.MouseWheelCallback,
-                      0,
-                      xp.WindowDecorationRoundRectangle,
-                      xp.WindowLayerFloatingWindows,
-                      None)
-        self.Window = xp.createWindowEx(windowInfo)
+        self.Window = xp.createWindowEx(50, 600, 300, 400, 1,
+                                        self.DrawWindowCallback,
+                                        self.MouseClickCallback,
+                                        self.KeyCallback,
+                                        self.CursorCallback,
+                                        self.MouseWheelCallback,
+                                        0,
+                                        xp.WindowDecorationRoundRectangle,
+                                        xp.WindowLayerFloatingWindows,
+                                        None)
 
         self.OwnedFloatData = 1.5
         self.OwnedDoubleData = 2.5
@@ -69,13 +68,13 @@ class PythonInterface:
             "xppython3/demos/sharedata/number1",
             xp.Type_Float + xp.Type_Double,         # The types we support
             1,                                      # Writable
-            0, 0,                                   # No accessors for ints
+            None, None,                                   # No accessors for ints
             self.MyGetDatafCallback, self.MySetDatafCallback,   # Accessors for floats
             self.MyGetDatadCallback, self.MySetDatadCallback,   # Accessors for doubles
-            0, 0,                                   # No accessors for int arrays
-            0, 0,                                   # No accessors for float arrays
-            0, 0,                                   # No accessors for raw data
-            0, 0)                                   # Refcons not used
+            None, None,                                   # No accessors for int arrays
+            None, None,                                   # No accessors for float arrays
+            None, None,                                   # No accessors for raw data
+            None, None)                                   # Refcons not used
 
         # Subscribe to shared data.  If no one else has made it, this will
         # cause the SDK to allocate the data.

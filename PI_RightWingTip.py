@@ -1,4 +1,5 @@
-import xp
+from XPPython3 import xp
+from XPPython3.xp_typing import *
 import math
 
 # Draw a couple of objects (red/white street traffic poles, in this case) using
@@ -34,7 +35,7 @@ class PythonInterface:
                          'theta': xp.findDataRef('sim/flightmodel/position/theta'),  # degrees OpenGL
                          'psi': xp.findDataRef('sim/flightmodel/position/psi'),  # degrees true, OpenGL
                          }
-        self.flightLoopID = xp.createFlightLoop(self.flightLoopCallback, 1)
+        self.flightLoopID = xp.createFlightLoop(self.flightLoopCallback, xp.FlightLoop_Phase_AfterFlightModel)
         xp.scheduleFlightLoop(self.flightLoopID, -1)
         return 1
 
@@ -96,12 +97,12 @@ class PythonInterface:
                                                 aircraft_position[4],  # psi
                                                 aircraft_position[3])  # theta
 
-        position = (aircraft_position[0] + world_x,
-                    aircraft_position[1] + world_y,
-                    aircraft_position[2] + world_z,
-                    aircraft_position[3],
-                    aircraft_position[4],
-                    aircraft_position[5])
+        position = XPLMDrawInfo_t(aircraft_position[0] + world_x,
+                                  aircraft_position[1] + world_y,
+                                  aircraft_position[2] + world_z,
+                                  aircraft_position[3],
+                                  aircraft_position[4],
+                                  aircraft_position[5])
 
         xp.instanceSetPosition(self.poleInstance2, position)
         

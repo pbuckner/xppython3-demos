@@ -1,9 +1,9 @@
 try:
-    from XPListBox import XPCreateListBox
+    from XPPython3.XPListBox import XPCreateListBox
 except ImportError:
     print("XPListBox is a custom python file provided with XPPython3, and required by this example you could copy it into PythonPlugins folder")
     raise
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:

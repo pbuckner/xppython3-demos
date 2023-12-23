@@ -80,11 +80,11 @@ class PythonInterface:
         self.NumberOfEngines = xp.getDatai(self.InputDataRef[1])
 
         # Get our throttle positions for each engine
-        self.Throttle = []
+        self.Throttle:list[float] = []
         count = xp.getDatavf(self.InputDataRef[0], self.Throttle, 0, self.NumberOfEngines)
 
         # Get our current N1 for each engine
-        self.CurrentN1 = []
+        self.CurrentN1:list[float] = []
         count = xp.getDatavf(self.OutputDataRef[0], self.CurrentN1, 0, self.NumberOfEngines)
 
         for Item in range(self.MAX_NUMBER_ENGINES):

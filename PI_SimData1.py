@@ -8,7 +8,7 @@ This example demonstrates how to interact with X-Plane by reading and writing
 data.  This example creates menus items that change the nav-1 radio frequency.
 """
 
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:

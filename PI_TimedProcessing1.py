@@ -16,7 +16,7 @@ your plugin.
 """
 
 import os
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:
@@ -67,7 +67,7 @@ class PythonInterface:
         lon = xp.getDataf(self.PlaneLon)
         el = xp.getDataf(self.PlaneEl)
 
-        # Write the data to a file.
+        # Write the data to a file.  Note this is buffered IO
         buf = "Time=%f, lat=%f,lon=%f,el=%f.\n" % (elapsed, lat, lon, el)
         self.OutputFile.write(buf)
 

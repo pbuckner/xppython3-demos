@@ -3,7 +3,12 @@ import sys
 import os
 import subprocess
 from fileinput import FileInput
-import XPPython3.xp as xp
+from XPPython3 import xp
+try:
+    import OpenGL.GL as GL
+except:
+    # (on error, we'll detect and try to load it below. For now, simply continue)
+    pass
 
 #
 # This plugin tests for the existence of OpenGL and attempts
@@ -84,8 +89,7 @@ def tryLoadOpenGL():
         xp.log(f"Calling pip as: {' '.join(cmd)}")
         try:
             output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-            output = output.decode('utf-8').split('\n')
-            xp.log(output)
+            xp.log(output.decode('utf-8'))
         except subprocess.CalledProcessError as e:
             xp.log("Fail: Calling pip failed: [{}]: {}".format(e.returncode, e.output.decode('utf-8')))
             return False

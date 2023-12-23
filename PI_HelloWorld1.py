@@ -13,7 +13,7 @@ This plugin demonstrates creating a window and writing mouse and drawing
 callbacks for that window.
 """
 
-import xp
+from XPPython3 import xp
 
 
 class PythonInterface:
@@ -35,17 +35,16 @@ class PythonInterface:
         """
         Now we create a window.  We pass in a rectangle in left, top,
         right, bottom screen coordinates.  We pass in three callbacks."""
-        windowInfo = (50, 600, 300, 400, 1,
-                      self.DrawWindowCallback,
-                      self.MouseClickCallback,
-                      self.KeyCallback,
-                      self.CursorCallback,
-                      self.MouseWheelCallback,
-                      0,
-                      xp.WindowDecorationRoundRectangle,
-                      xp.WindowLayerFloatingWindows,
-                      None)
-        self.WindowId = xp.createWindowEx(windowInfo)
+        self.WindowId = xp.createWindowEx(50, 600, 300, 400, 1,
+                                          self.DrawWindowCallback,
+                                          self.MouseClickCallback,
+                                          self.KeyCallback,
+                                          self.CursorCallback,
+                                          self.MouseWheelCallback,
+                                          0,
+                                          xp.WindowDecorationRoundRectangle,
+                                          xp.WindowLayerFloatingWindows,
+                                          None)
         return self.Name, self.Sig, self.Desc
 
     """
