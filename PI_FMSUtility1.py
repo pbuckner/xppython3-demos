@@ -9,6 +9,7 @@ This examples shows how to access the FMS.
 """
 
 from XPPython3 import xp
+from XPPython3 import xp_typing
 
 
 class PythonInterface:
@@ -372,7 +373,7 @@ class PythonInterface:
                 Buffer = xp.getWidgetDescriptor(self.AltitudeEdit)
                 Altitude = int(Buffer)
                 Buffer = xp.getWidgetDescriptor(self.NavTypeText)
-                NavType:xp.XPLMNavType = xp.XPLMNavType(int(Buffer))
+                NavType:xp.XPLMNavType = xp_typing.XPLMNavType(int(Buffer))
                 Buffer = xp.getWidgetDescriptor(self.AirportIDEdit)
                 IDFragment = Buffer
                 xp.setFMSEntryInfo(Index, xp.findNavAid(None, IDFragment, None, None, None, NavType), Altitude)
