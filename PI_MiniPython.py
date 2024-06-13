@@ -19,6 +19,7 @@ from XPPython3.XPListBox import XPCreateListBox, Prop
 Max_History = 20  # read in this number of (unique) previous command history on startup.
 History_Filename = 'minipython_history.txt'
 
+
 class IncompleteError(Exception):
     pass
 
@@ -28,7 +29,6 @@ class PythonInterface:
         self.historyIdx = -1
         self.partialCommand = []
         self.prevCommands = None
-        self.historyIdx = -1
         self.widget1 = None
         self.textWidget = None
         self.doButton = None
@@ -50,8 +50,10 @@ class PythonInterface:
                 for line in fp.readlines():
                     if line.startswith('>>> exit()') or line == '>>> \n':
                         continue
-                    if line[0:-1] not in self.prevCommands:
-                        self.prevCommands.append(line[0:-1])
+                    # comment out.... Actually, it's best to store all commands, not just "unique", at least until
+                    # we can Search back previous commands...
+                    # if line[0:-1] not in self.prevCommands:
+                    #     self.prevCommands.append(line[0:-1])
             self.prevCommands = self.prevCommands[-Max_History:]
         except OSError:
             pass
@@ -288,7 +290,7 @@ class PythonInterface:
             # Write command history to file
             filename = os.path.join(os.path.dirname(xp.getPrefsPath()), History_Filename)
             with open(filename, 'w', encoding='utf-8') as fp:
-                for idx, i in enumerate(self.prevCommands):
+                for i in self.prevCommands:
                     fp.write(i + '\n')
 
         if self.toggleCommandRef:
@@ -310,8 +312,10 @@ class PythonInterface:
                 num_added += 1
                 self.listboxWidget.add(line)
 
-        num_blank_lines = (xp.getWidgetProperty(self.listboxWidget.widgetID, Prop.ListBoxMaxListBoxItems, None) - 2 -
-                           num_added)
+        num_blank_lines = xp.getWidgetProperty(self.listboxWidget.widgetID,
+                                               Prop.ListBoxMaxListBoxItems, None)
+        num_blank_lines -= 2 + num_added
+
         for _i in range(num_blank_lines):
             self.listboxWidget.add('')
 
@@ -341,7 +345,7 @@ class PythonInterface:
             return
         elif s.startswith('>>> ?'):
             self.listboxWidget.add(s)
-            #with open(os.path.join(xp.getSystemPath(), 'Resources', 'plugins', 'Commands.txt'), "r", encoding='utf-8') as fp_c:
+            # with open(os.path.join(xp.getSystemPath(), 'Resources', 'plugins', 'Commands.txt'), "r", encoding='utf-8') as fp_c:
             with open(os.path.join(xp.getSystemPath(), 'Resources', 'plugins', 'DataRefs.txt'), "r", encoding='utf-8') as fp_d:
                 items = [x for x in fp_d.readlines() if re.search(s[5:], x, flags=re.IGNORECASE)]
                 # items += [x for x in fp_c.readlines() if s[5:].lower() in x.lower()]
@@ -377,7 +381,7 @@ class PythonInterface:
             # adds it to the window
             try:
                 self.do('\n'.join(self.partialCommand))
-            except:
+            except Exception:
                 pass
             xp.setWidgetDescriptor(self.textWidget, '>>> ')
             self.partialCommand = []
