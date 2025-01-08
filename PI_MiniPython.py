@@ -11,6 +11,10 @@ from XPPython3 import xp
 from XPPython3.XPListBox import XPCreateListBox, Prop
 
 # Change log
+# v2.2 * Corrected placing history into history buffer
+#      * Fixed 'previous' command display to correctly get the next entry (previously, first
+#        'previous' invocation returned empty command.
+#      * improved type hinting
 # v2.1 * Fixed scroll position of textWidget: on long input, we didn't reset left-most scroll position
 #      * Automatically store and restore 'history'... To maintain sanity, maximum lines restored is Max_History
 #      * Also, on input, we _always_ scroll to the bottom (you can scroll up, but as input is added, we'll
@@ -53,7 +57,7 @@ class PythonInterface:
                     # comment out.... Actually, it's best to store all commands, not just "unique", at least until
                     # we can Search back previous commands...
                     # if line[0:-1] not in self.prevCommands:
-                    #     self.prevCommands.append(line[0:-1])
+                    self.prevCommands.append(line[0:-1])
             self.prevCommands = self.prevCommands[-Max_History:]
         except OSError:
             pass
@@ -95,16 +99,19 @@ class PythonInterface:
         self.widget1 = xp.createWidget(windowLeft, windowTop, windowLeft + windowWidth, windowTop - windowHeight, 0,
                                        "Mini Python Interpreter", 1, 0, xp.WidgetClass_MainWindow)
         self.popout = popout
-        row = windowTop - 25
-        self.listboxWidget = XPCreateListBox(windowLeft + 10,
+        row = windowTop - 25  # '25' lowers the top of the listbox to put it below the Main Window title bar
+        windowContentLeft = windowLeft + 10  # '10' adds 10 pixels to shift listbox over to the left.
+        self.listboxWidget = XPCreateListBox(windowContentLeft,
                                              row,
-                                             windowLeft + windowWidth,
+                                             windowLeft + windowWidth,  # extends to far right of window
                                              row - 295,
                                              1, self.widget1)
 
         row = row - 295
-        self.textWidget = xp.createWidget(windowLeft + 10,
+        self.textWidget = xp.createWidget(windowContentLeft,
                                           row,
+                                          # '20' is width of ListBox scrollbar, this way the text widget
+                                          # matches the width of the ListBox _content_, excluding the scrollbar
                                           windowLeft + windowWidth - 20,
                                           row - 20, 1,
                                           self.prevCommands[-1], 0, self.widget1, xp.WidgetClass_TextField)
@@ -117,8 +124,8 @@ class PythonInterface:
         xp.setWidgetProperty(self.popOutButton, xp.Property_ButtonBehavior, xp.ButtonBehaviorPushButton)
 
         col1 = 160
-        col2 = 350
-        col3 = 470
+        col2 = 340
+        col3 = 450
         xp.createWidget(col1, row, 480, row - height, 1,
                         '^A ^E: Beginning / End of line', 0, self.widget1, xp.WidgetClass_Caption)
         xp.createWidget(col2, row, 480, row - height, 1,
@@ -130,6 +137,8 @@ class PythonInterface:
                         '^N ^P: Next / Previous line', 0, self.widget1, xp.WidgetClass_Caption)
         xp.createWidget(col2, row, 480, row - height, 1,
                         '^K: Kill to EOL', 0, self.widget1, xp.WidgetClass_Caption)
+        xp.createWidget(col3, row, col3 + 100, row - height, 1,
+                        '/<phrase>: Search SDK', 0, self.widget1, xp.WidgetClass_Caption)
         row -= height + 4
         xp.createWidget(col1, row, 480, row - height, 1,
                         '^F ^B: Move Forward / Back', 0, self.widget1, xp.WidgetClass_Caption)
@@ -208,8 +217,8 @@ class PythonInterface:
                 xp.setWidgetProperty(widgetID, xp.Property_EditFieldSelEnd, len(xp.getWidgetDescriptor(widgetID)))
                 return 1
             if param1[2] == xp.VK_UP or (param1[2] == xp.VK_P and param1[1] & xp.ControlFlag):
-                xp.setWidgetDescriptor(widgetID, self.prevCommands[self.historyIdx])
                 self.historyIdx = (self.historyIdx - 1) % len(self.prevCommands)
+                xp.setWidgetDescriptor(widgetID, self.prevCommands[self.historyIdx])
                 xp.setWidgetProperty(widgetID, xp.Property_EditFieldSelStart, len(xp.getWidgetDescriptor(widgetID)))
                 xp.setWidgetProperty(widgetID, xp.Property_EditFieldSelEnd, len(xp.getWidgetDescriptor(widgetID)))
                 return 1
@@ -262,7 +271,7 @@ class PythonInterface:
                 self.try_execute(xp.getWidgetDescriptor(self.textWidget))
             except SystemExit:
                 xp.hideWidget(self.widget1)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 xp.log(f"Caught other exception in widget messages, after try_execute: {e}")
                 xp.log()
             return 1
@@ -374,21 +383,21 @@ class PythonInterface:
                 xp.setWidgetDescriptor(self.textWidget, '... ')
         except IncompleteError:
             pass
-        except SystemExit:
-            raise
-        except Exception:
+        except Exception as e:  # pylint: disable=broad-except
+            if isinstance(e, SystemExit):
+                raise e
             # do it anyway -- this captures the exception output and
             # adds it to the window
             try:
                 self.do('\n'.join(self.partialCommand))
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 pass
             xp.setWidgetDescriptor(self.textWidget, '>>> ')
             self.partialCommand = []
 
     def do(self, s):
-        f = io.StringIO()
-        e = io.StringIO()
+        stdout = io.StringIO()
+        stderr = io.StringIO()
         num_lines = len(s.split('\n'))
         if s.strip().startswith('#'):
             return
@@ -396,23 +405,23 @@ class PythonInterface:
             self.listboxWidget.add('>>> ')
             return
 
-        with contextlib.redirect_stderr(e):
-            with contextlib.redirect_stdout(f):
+        with contextlib.redirect_stderr(stderr):
+            with contextlib.redirect_stdout(stdout):
                 print(f">>> {s}")
                 try:
-                    exec(compile(s, '<string>', 'single'), globals())
-                except SystemExit:
-                    raise
-                except Exception:
+                    exec(compile(s, '<string>', 'single'), globals())  # pylint: disable=exec-used
+                except Exception as e:  # pylint: disable=broad-except
+                    if isinstance(e, SystemExit):
+                        raise e
                     e_type, value, tb = sys.exc_info()
                     traceback.print_exception(e_type, value, tb)
 
-        s = f.getvalue().strip()
+        s = stdout.getvalue().strip()
         if s:
             # print stdout, but SKIP the length of the incoming commands. (we already display them)
             for line in s.split('\n')[(num_lines):]:
                 self.listboxWidget.add(line)
-        s = e.getvalue().strip()
+        s = stderr.getvalue().strip()
         if s:
             for line in s.split('\n'):
                 self.listboxWidget.add(line)
