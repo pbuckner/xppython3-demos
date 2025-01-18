@@ -1,7 +1,9 @@
+from typing import Self, Any, Optional
 import os
 from XPPython3 import xp
-from XPPython3 import xp_imgui # type: ignore
-import imgui  # type: ignore
+from XPPython3 import xp_imgui
+from XPPython3.xp_typing import XPLMCommandRef
+import imgui
 
 
 # Simple imgui demo
@@ -14,13 +16,13 @@ import imgui  # type: ignore
 # storage in a "real" plugin.
 
 class PythonInterface:
-    def __init__(self):
+    def __init__(self: Self) -> None:
         self.windowNumber = 0  # Number we increment, just to "know" which window I've just created
-        self.imgui_windows = {}  # {'xp_imgui.Window' instances}
-        self.cmd = None
-        self.cmdRef = []
-        
-    def XPluginStart(self):
+        self.imgui_windows: dict = {}  # {'xp_imgui.Window' instances}
+        self.cmd: Optional[XPLMCommandRef] = None
+        self.cmdRef = None
+
+    def XPluginStart(self: Self) -> tuple[str, str, str]:
         # Create command and attach to Menu, to create a new IMGUI window
         self.cmd = xp.createCommand(f"xpppython3/{os.path.basename(__file__)}/createWindow",
                                     "Create IMGUI window")
@@ -29,27 +31,27 @@ class PythonInterface:
 
         return 'PI_imgui v1.0', 'xppython3.imgui_test', 'Simple IMGUI test plugin'
 
-    def XPluginEnable(self):
+    def XPluginEnable(self: Self) -> int:
         return 1
-  
-    def XPluginStop(self):
+
+    def XPluginStop(self: Self) -> None:
         # unregister command and clean up menu
         xp.unregisterCommandHandler(self.cmd, self.commandHandler, 1, self.cmdRef)
         xp.clearAllMenuItems(xp.findPluginsMenu())
-  
-    def XPluginDisable(self):
+
+    def XPluginDisable(self: Self) -> None:
         # delete any imgui_windows, clear the structure
         for x in list(self.imgui_windows):
             self.imgui_windows[x]['instance'].delete()
             del self.imgui_windows[x]
-  
-    def commandHandler(self, cmdRef, phase, refCon):
+
+    def commandHandler(self: Self, _cmdRef: XPLMCommandRef, phase: int, _refCon: Any):
         if phase == xp.CommandBegin:
             # For fun, we'll create a NEW window each time the command is invoked.
             self.createWindow(f'{os.path.basename(__file__)} Window #{self.windowNumber}')
             self.windowNumber += 1
         return 1
-  
+
     def createWindow(self, title):
         # Update my imgui_windows dict with information about the new window, including (for
         # demo purposes) stored values of the various widgets.
@@ -66,16 +68,13 @@ class PythonInterface:
                                      'radio': 1,
                                      'slider': 4.75,
                                      'text': 'type here'}
-  
-        # Determine where you want the window placed. Note these
-        # windows are placed relative the global screen (composite
-        # of all your monitors) rather than the single 'main' screen.
-        l, t, r, b = xp.getScreenBoundsGlobal()
+
+        l, t, _r, _b = xp.getScreenBoundsGlobal()
         width = 600
         height = 600
         left_offset = 110
         top_offset = 110
-  
+
         # Create the imgui Window, and save it.
         self.imgui_windows[title].update({
             'instance': xp_imgui.Window(left=l + left_offset,
@@ -85,32 +84,32 @@ class PythonInterface:
                                         visible=1,
                                         draw=self.drawWindow,
                                         refCon=self.imgui_windows[title])})
-  
+
         # and (optionally) set the title of the created window using .setTitle()
         self.imgui_windows[title]['instance'].setTitle(title)
         return
-  
-    def drawWindow(self, windowID, refCon):
+
+    def drawWindow(self, _windowID, refCon):
         # LABEL
         imgui.text("Simple Label")
-  
+
         # COLORED LABEL
         imgui.text_colored(text="Colored Label", r=1.0, g=0.0, b=0.0, a=1.0)
-  
+
         # BUTTON
-        if imgui.button("Button Pressed #{} times".format(refCon['numButtonPressed'])):
+        if imgui.button(f"Button Pressed #{refCon['numButtonPressed']} times"):
             # every time it's pressed, we increment it's label.
             refCon['numButtonPressed'] += 1
-  
+
         # TEXT INPUT
-        changed, refCon['text'] = imgui.input_text("Text Input", refCon['text'], 50)
-  
+        _changed, refCon['text'] = imgui.input_text("Text Input", refCon['text'], 50)
+
         # CHECKBOX
-        changed, refCon['checkbox1'] = imgui.checkbox(label="Check 1",
-                                                      state=refCon['checkbox1'])
-        changed, refCon['checkbox2'] = imgui.checkbox(label="Check 2",
-                                                      state=refCon['checkbox2'])
-  
+        _changed, refCon['checkbox1'] = imgui.checkbox(label="Check 1",
+                                                       state=refCon['checkbox1'])
+        _changed, refCon['checkbox2'] = imgui.checkbox(label="Check 2",
+                                                       state=refCon['checkbox2'])
+
         # RADIO
         if imgui.radio_button("A", refCon['radio'] == 0):
             refCon['radio'] = 0
@@ -120,8 +119,7 @@ class PythonInterface:
         imgui.same_line()
         if imgui.radio_button("C", refCon['radio'] == 2):
             refCon['radio'] = 2
-  
+
         # SLIDER
-        changed, refCon['slider'] = imgui.slider_float("Slider", refCon['slider'], 0.0, 10.0)
+        _changed, refCon['slider'] = imgui.slider_float("Slider", refCon['slider'], 0.0, 10.0)
         return
-  
