@@ -59,7 +59,7 @@ class PythonInterface:
     def XPluginStart(self):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        xp.registerDrawCallback(self.ExampleGaugeDrawCallback, xp.Phase_LastCockpit)  # Doesn't work with "Phase_Gauges"
+        xp.registerDrawCallback(self.ExampleGaugeDrawCallback, xp.Phase_Window)  # Doesn't work with "Phase_Gauges"
 
         # Create our window, setup datarefs and register our hotkey.
         self.ExampleGaugePanelDisplayWindow = xp.createWindowEx(left=768, top=256, right=1024, bottom=0,
