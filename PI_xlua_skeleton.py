@@ -97,9 +97,9 @@ from XPPython3.utils import xlua
 # !! Comment out the methods you don't need: this will save processing time!!
 
 
-class PythonInteface(EasyPython):
+class PythonInterface(EasyPython):
 
-    def airacraft_load(self):
+    def aircraft_load(self):
         # once, when aircraft is loaded
         pass
 
