@@ -18,8 +18,16 @@ Requires PIL python module.
   vertices as (x, y, u, v[, color]) tuples -- color defaulting to opaque white --
   and indices as plain ints. Both paths are exercised below: c_quad and c_tri
   pass sequences, c_scissor passes bytes. Each draw call is
-  (tex|None, (left, top, right, bottom), idx_offset, element_count, vtx_offset)
-  with window-LOCAL, TOP-LEFT-origin coordinates (the host flips Y).
+  (tex|None, (x1, y1, x2, y2), idx_offset, element_count, vtx_offset)
+  where the scissor is two opposite corners, in the same space as the vertices.
+
+  COORDINATES (SDK440 beta 4 and later): vertices and scissors are in PANEL
+  coordinates under the CURRENT TRANSFORM, like every other panel-graphics
+  primitive. Nothing is translated or flipped for us. This demo builds its meshes
+  window-LOCAL with a TOP-LEFT origin and Y down (ImGui's convention), so
+  drawWindow() sets that space up first: transformTranslate(left, top) then
+  transformScale(1, -1). Earlier X-Plane releases did both for us, so on those
+  this demo now draws double-transformed.
 
 Results go to XPPython3Log.txt, prefixed [PGDrawCalls].
 """
@@ -235,7 +243,12 @@ class PythonInterface(object):
             lx = ox - l
             ty = t - (oy + s)     # top edge, local
             try:
-                fn(lx, ty, s)
+                # Window-local, top-left origin, Y down -- see the header. Only the
+                # drawCalls cells need this; the label below is in panel coordinates.
+                with xp.transformContext():
+                    xp.transformTranslate(l, t)
+                    xp.transformScale(1.0, -1.0)
+                    fn(lx, ty, s)
             except Exception as e:  # noqa: BLE001
                 self.error(f'draw {label}: {e!r}')
                 raise
