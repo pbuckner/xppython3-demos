@@ -6,11 +6,12 @@ mapDisplayGetTerrainAltitudes).
 
 A single pop-out avionics device draws ONE map view plus a label block.
 
-  SPACE  cycle through the eight XPLMMapLayers values (Nexrad, IR, Topo,
-         Terrain, Water, EGPWS, raw_elev, safe_taxi).  The selected layer is
-         the *only* layer passed to mapDisplayDrawIn().  Unlike SVT there is
-         no "all" flag, and some layers are mutually exclusive (Nexrad with
-         IR or EGPWS), which is another reason to show exactly one at a time.
+  SPACE  cycle through the nine XPLMMapLayers values (Nexrad, clouds,
+         color_IR, Topo, Terrain, Water, EGPWS, raw_elev, safe_taxi).  The
+         selected layer is the *only* layer passed to mapDisplayDrawIn().
+         Unlike SVT there is no "all" flag, and some layers are mutually
+         exclusive (Nexrad with EGPWS; only one of Nexrad, clouds or color_IR),
+         which is another reason to show exactly one at a time.
 
   TAB    cycle through the sixteen dataOverride selections: the fifteen fields
          of XPLMMapCustomData_t (datLat, datLon, ctrX, ctrY, roseRadius,
@@ -62,7 +63,7 @@ MAP_TOP = SCREEN_H - MARGIN
 MAP_LEFT = MARGIN
 MAP_RIGHT = int(MAP_LEFT + (MAP_TOP - MAP_BOTTOM) * 1.25)  # SCREEN_W - MARGIN
 
-LAYER_NAMES = ['Map_Nexrad', 'Map_IR', 'Map_Topo', 'Map_Terrain',
+LAYER_NAMES = ['Map_Nexrad', 'Map_clouds', 'Map_color_IR', 'Map_Topo', 'Map_Terrain',
                'Map_Water', 'Map_EGPWS', 'Map_raw_elev', 'Map_safe_taxi']
 
 # The fifteen XPLMMapCustomData_t fields, in struct order (which is the order
@@ -135,7 +136,7 @@ class PythonInterface(object):
         self.map = None
         self.font = None
         self.sniffer = None
-        self.layerIndex = 3                      # start on Map_Terrain: visible
+        self.layerIndex = 4                      # start on Map_Terrain: visible
         self.overrideIndex = NONE_INDEX          # start on "None"
         self.values = [0.0] * len(OVERRIDE_FIELDS)
         self.refs = {}                           # field index -> (dataref, kind)
